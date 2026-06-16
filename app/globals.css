@@ -1,26 +1,223 @@
+/* ============================================================================
+   THROUGHLINE — BASE DESIGN THEME
+   Drop-in for a shadcn / Tailwind v4 / TypeScript project.
+   Save as:  app/globals.css   (import it once in app/layout.tsx)
+
+   What's in here:
+     1. Font faces
+     2. Brand tokens (the single source of truth)
+     3. shadcn semantic tokens, mapped to the brand (light + dark)
+     4. @theme inline  → exposes everything as Tailwind utilities
+        (bg-paper, text-ink, text-volt, font-display, rounded-card, …)
+     5. Base layer (resets, body type, selection, focus, reduced-motion)
+     6. Reusable primitives used across every screen
+        (.eyebrow, .mono, .btn, .reveal, .marquee)
+   ============================================================================ */
+
+/* 1. FONTS ------------------------------------------------------------------
+   Quick path = Google Fonts import below.
+   Production path = next/font (see BUILD-PROMPTS.md, Prompt 1) and delete this. */
 @import "tailwindcss";
 
+/* enable class-based dark mode (`<html class="dark">` or per-section `.dark`) */
+@custom-variant dark (&:is(.dark *));
+
+/* 2 + 3. TOKENS -------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ---- brand palette (raw, never themed away) ---- */
+  --paper:   #FAFDEE; /* primary background — cream         */
+  --paper-2: #EFF4DC; /* card / divider tint                */
+  --ink:     #1F3A4B; /* primary ink + dark sections        */
+  --ink-2:   #162B38; /* deeper ink                         */
+  --slate:   #5C7480; /* muted secondary text               */
+  --volt:    #C2F84F; /* THE accent — the line              */
+
+  /* ---- type ---- */
+  --font-display: "Bricolage Grotesque", ui-sans-serif, sans-serif;
+  --font-body:    "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, monospace;
+
+  /* ---- shape + motion ---- */
+  --radius:    1.75rem; /* 28px base card radius */
+  --radius-lg: 2.5rem;  /* 40px feature radius   */
+  --ease:      cubic-bezier(0.22, 1, 0.36, 1);
+  --gutter:    clamp(20px, 5vw, 72px);
+  --maxw:      1240px;
+
+  /* ---- shadcn semantic tokens (LIGHT = cream theme) ---- */
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--paper-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--paper-2);
+  --muted-foreground: var(--slate);
+  --accent: var(--volt);
+  --accent-foreground: var(--ink-2);
+  --destructive: #e5484d;
+  --destructive-foreground: var(--paper);
+  --border: color-mix(in srgb, var(--ink) 12%, transparent);
+  --input: color-mix(in srgb, var(--ink) 18%, transparent);
+  --ring: var(--volt);
 }
 
+/* DARK = used by the dark sections (nav-over-dark, process band, footer).
+   Wrap any section in <div class="dark"> to flip it. */
+.dark {
+  --background: var(--ink);
+  --foreground: var(--paper);
+  --card: var(--ink-2);
+  --card-foreground: var(--paper);
+  --popover: var(--ink-2);
+  --popover-foreground: var(--paper);
+  --primary: var(--volt);
+  --primary-foreground: var(--ink-2);
+  --secondary: var(--ink-2);
+  --secondary-foreground: var(--paper);
+  --muted: var(--ink-2);
+  --muted-foreground: color-mix(in srgb, var(--paper) 70%, transparent);
+  --accent: var(--volt);
+  --accent-foreground: var(--ink-2);
+  --border: color-mix(in srgb, var(--paper) 18%, transparent);
+  --input: color-mix(in srgb, var(--paper) 24%, transparent);
+  --ring: var(--volt);
+}
+
+/* 4. EXPOSE AS TAILWIND UTILITIES ------------------------------------------- */
 @theme inline {
+  /* brand colors → bg-paper, text-volt, border-ink, … */
+  --color-paper:   var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink:     var(--ink);
+  --color-ink-2:   var(--ink-2);
+  --color-slate:   var(--slate);
+  --color-volt:    var(--volt);
+
+  /* shadcn semantic colors → bg-background, text-primary, … */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* type → font-display, font-sans, font-mono */
+  --font-display: var(--font-display);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+
+  /* radius → rounded-card, rounded-feature */
+  --radius-card: var(--radius);
+  --radius-feature: var(--radius-lg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* 5. BASE -------------------------------------------------------------------- */
+@layer base {
+  * { border-color: var(--border); }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 0.98;
+  }
+
+  ::selection { background: var(--volt); color: var(--ink-2); }
+
+  :focus-visible {
+    outline: 2px solid var(--volt);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* 6. REUSABLE PRIMITIVES (used on every screen) ----------------------------- */
+@layer components {
+  /* page width helper */
+  .wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: var(--gutter); }
+
+  /* mono caption / data voice — we are developers */
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.04em;
+    color: var(--muted-foreground);
+  }
+
+  /* section eyebrow with the lime tick */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--foreground);
+  }
+  .eyebrow::before { content: ""; width: 26px; height: 2px; background: var(--volt); }
+
+  /* pill buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 500;
+    padding: 15px 24px;
+    border-radius: 999px;
+    border: 1.5px solid var(--foreground);
+    transition: transform 0.35s var(--ease), background 0.35s var(--ease), color 0.35s var(--ease);
+  }
+  .btn-solid { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); }
+  .btn-solid:hover { background: var(--volt); color: var(--ink-2); border-color: var(--volt); transform: translateY(-3px); }
+  .btn-ghost:hover { background: var(--foreground); color: var(--background); transform: translateY(-3px); }
+
+  /* scroll-reveal base (pair with framer-motion or IntersectionObserver) */
+  .reveal { opacity: 0; transform: translateY(34px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
+  .reveal.show { opacity: 1; transform: none; }
+
+  /* infinite marquee track */
+  .marquee-track { display: flex; width: max-content; animation: marquee 26s linear infinite; }
+  @keyframes marquee { to { transform: translateX(-50%); } }
 }
