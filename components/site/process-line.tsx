@@ -48,10 +48,9 @@ export default function ProcessLine() {
             {...reveal(2)}
           >
             The same small team carries your product from the first whiteboard
-            sketch to the production deploy — no handoffs, no telephone game, no
-            knowledge lost between strangers. That lime line tracing down the
-            page is exactly that: a single, unbroken throughline of ownership
-            from idea to shipped.
+            sketch to the production deploy — no handoffs, no telephone game,
+            nothing lost between strangers. That lime line is exactly that: a
+            single, unbroken throughline of ownership from idea to shipped.
           </motion.p>
         </div>
       </div>

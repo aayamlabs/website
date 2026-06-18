@@ -1,5 +1,7 @@
 import { ArrowRight } from "lucide-react";
+import { team } from "@/lib/team";
 import CallButton from "./call-button";
+import ContactForm from "./contact-form";
 
 // NOTE: lucide-react 1.18.0 no longer ships brand/social icons (Github, Twitter,
 // Dribbble, Linkedin, Instagram are all gone), so the glyphs are inlined here.
@@ -58,10 +60,10 @@ function InstagramIcon({ className }: IconProps) {
 }
 
 const SOCIALS = [
-  { label: "GitHub", href: "#", Icon: GithubIcon },
-  { label: "X", href: "#", Icon: XIcon },
+  { label: "GitHub", href: team.github, Icon: GithubIcon },
+  { label: "X", href: team.x, Icon: XIcon },
   { label: "Dribbble", href: "#", Icon: DribbbleIcon },
-  { label: "LinkedIn", href: "#", Icon: LinkedinIcon },
+  { label: "LinkedIn", href: team.linkedin, Icon: LinkedinIcon },
   { label: "Instagram", href: "#", Icon: InstagramIcon },
 ];
 
@@ -85,45 +87,55 @@ export default function SiteFooter() {
           </span>
         </h2>
 
-        {/* Mailto with lime underline + nudging arrow */}
-        <a
-          href="mailto:hello@throughline.dev"
-          className="group mt-12 inline-flex w-fit items-center gap-3 border-b-2 border-volt pb-1 font-mono text-lg text-paper"
-        >
-          hello@throughline.dev
-          <ArrowRight
-            size={18}
-            aria-hidden="true"
-            className="transition-transform duration-300 group-hover:translate-x-1.5"
-          />
-        </a>
+        <div className="mt-14 grid gap-12 lg:grid-cols-2">
+          {/* Primary action: the contact form */}
+          <ContactForm />
 
-        {/* Call us — click to reveal the phone number */}
-        <div className="mt-6">
-          <CallButton />
-        </div>
-
-        {/* Social row */}
-        <ul className="mt-12 flex flex-wrap gap-3">
-          {SOCIALS.map(({ label, href, Icon }) => (
-            <li key={label}>
+          {/* Secondary: direct contact */}
+          <div className="flex flex-col gap-8 lg:pl-4">
+            <div>
+              <p className="font-mono text-sm text-muted-foreground">
+                Prefer something direct?
+              </p>
+              {/* Mailto — secondary link */}
               <a
-                href={href}
-                aria-label={label}
-                className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-paper transition-all duration-300 hover:-translate-y-1 hover:border-volt hover:bg-volt hover:text-ink-2"
+                href={`mailto:${team.email}`}
+                className="group mt-3 inline-flex w-fit items-center gap-3 border-b-2 border-volt pb-1 font-mono text-lg text-paper"
               >
-                <Icon className="h-[18px] w-[18px]" />
+                {team.email}
+                <ArrowRight
+                  size={18}
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:translate-x-1.5"
+                />
               </a>
-            </li>
-          ))}
-        </ul>
+            </div>
+
+            {/* Call us — click to reveal the phone number */}
+            <CallButton />
+
+            {/* Social row */}
+            <ul className="flex flex-wrap gap-3">
+              {SOCIALS.map(({ label, href, Icon }) => (
+                <li key={label}>
+                  <a
+                    href={href}
+                    aria-label={label}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-paper transition-all duration-300 hover:-translate-y-1 hover:border-volt hover:bg-volt hover:text-ink-2"
+                  >
+                    <Icon className="h-[18px] w-[18px]" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
 
       {/* Bottom bar */}
       <div className="wrap">
         <div className="mono flex flex-col gap-2 border-t border-border py-8 sm:flex-row sm:items-center sm:justify-between">
-          <span>© 2026 Throughline collective</span>
-          <span>{"// built as one continuous line"}</span>
+          <span>© 2026 {team.name}</span>
         </div>
       </div>
     </footer>

@@ -4,12 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
+import { team } from "@/lib/team";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { label: "what we build", href: "#build" },
   { label: "work", href: "#work" },
   { label: "clients", href: "#words" },
+  { label: "about", href: "#about" },
 ] as const;
 
 export default function Navbar() {
@@ -41,7 +43,7 @@ export default function Navbar() {
         href="/"
         className="flex items-center gap-2 font-display text-xl font-extrabold tracking-tight text-foreground"
       >
-        throughline
+        {team.name.toLowerCase()}
         <span
           aria-hidden="true"
           className="relative inline-flex h-[11px] w-[11px]"

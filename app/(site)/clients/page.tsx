@@ -8,7 +8,7 @@ import AccentStroke from "@/components/site/accent-stroke";
 import { testimonials } from "@/lib/site-data";
 
 export const metadata: Metadata = {
-  title: "Clients — Throughline",
+  title: "Clients",
   description: "What clients say, in their words.",
 };
 

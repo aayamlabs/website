@@ -1,139 +1,18 @@
 "use client";
 
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Edges, Icosahedron } from "@react-three/drei";
-import {
-  AnimatePresence,
-  motion,
-  useReducedMotion,
-} from "framer-motion";
-import * as THREE from "three";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import dynamic from "next/dynamic";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { team } from "@/lib/team";
 
 const VOLT = "#C2F84F";
-const INK = "#1F3A4B";
 const WORDS = ["websites", "AI agents", "mobile apps", "software"];
 const ROTATE_MS = 2400;
 
-/* ---------------------------------------------------------------- 3D scene */
+// Lazy-load the 3D canvas: client-only, only fetched when actually mounted.
+const HeroCanvas = dynamic(() => import("./hero-canvas"), { ssr: false });
 
-type SceneProps = {
-  isMobile: boolean;
-  reduced: boolean;
-};
-
-// Deterministic [0,1) hash — pure (no Math.random), so positions are stable
-// across renders and SSR/hydration.
-function hash(n: number) {
-  const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
-  return x - Math.floor(x);
-}
-
-function FloatingPoints() {
-  const positions = useMemo(() => {
-    const count = 130;
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      arr[i * 3] = (hash(i * 3) - 0.5) * 12;
-      arr[i * 3 + 1] = (hash(i * 3 + 1) - 0.5) * 12;
-      arr[i * 3 + 2] = (hash(i * 3 + 2) - 0.5) * 12;
-    }
-    return arr;
-  }, []);
-
-  return (
-    <points>
-      <bufferGeometry>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-      </bufferGeometry>
-      <pointsMaterial
-        color={INK}
-        size={0.045}
-        sizeAttenuation
-        transparent
-        opacity={0.45}
-      />
-    </points>
-  );
-}
-
-function Scene({ isMobile, reduced }: SceneProps) {
-  const parallax = useRef<THREE.Group>(null);
-  const spinner = useRef<THREE.Group>(null);
-  const pointer = useRef({ x: 0, y: 0 });
-
-  // Track the pointer at the window level so the canvas can stay
-  // pointer-events:none and the foreground buttons remain clickable.
-  useEffect(() => {
-    if (reduced) return;
-    const onMove = (e: PointerEvent) => {
-      pointer.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      pointer.current.y = -((e.clientY / window.innerHeight) * 2 - 1);
-    };
-    window.addEventListener("pointermove", onMove);
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [reduced]);
-
-  useFrame((_, delta) => {
-    // Slow auto-rotation.
-    if (spinner.current && !reduced) {
-      spinner.current.rotation.y += delta * 0.15;
-      spinner.current.rotation.x += delta * 0.04;
-    }
-    // Subtle mouse parallax (lerp toward pointer).
-    if (parallax.current) {
-      const tx = reduced ? 0 : pointer.current.y * 0.18;
-      const ty = reduced ? 0 : pointer.current.x * 0.18;
-      parallax.current.rotation.x = THREE.MathUtils.lerp(
-        parallax.current.rotation.x,
-        tx,
-        0.05
-      );
-      parallax.current.rotation.y = THREE.MathUtils.lerp(
-        parallax.current.rotation.y,
-        ty,
-        0.05
-      );
-    }
-  });
-
-  return (
-    <>
-      <ambientLight intensity={0.7} />
-      <directionalLight position={[4, 5, 6]} intensity={1.1} />
-      <group ref={parallax} position={[isMobile ? 0 : 2.4, 0, 0]}>
-        <group ref={spinner} scale={isMobile ? 0.7 : 1}>
-          {/* Lime wireframe shell */}
-          <Icosahedron args={[2, 1]}>
-            <meshBasicMaterial transparent opacity={0} />
-            <Edges threshold={1} color={VOLT} />
-          </Icosahedron>
-
-          {/* Solid ink core */}
-          <mesh>
-            <icosahedronGeometry args={[0.9, 0]} />
-            <meshStandardMaterial
-              color={INK}
-              flatShading
-              roughness={0.5}
-              metalness={0.1}
-            />
-          </mesh>
-
-          <FloatingPoints />
-        </group>
-      </group>
-    </>
-  );
-}
-
-/* -------------------------------------------------------- WebGL detection */
+/* ----------------------------------------------- capability detection */
 
 function isWebGLAvailable() {
   try {
@@ -147,12 +26,22 @@ function isWebGLAvailable() {
   }
 }
 
-// Cache so the useSyncExternalStore snapshot is stable across renders.
 let webglCache: boolean | null = null;
 function getWebGL() {
   if (webglCache === null) webglCache = isWebGLAvailable();
   return webglCache;
 }
+
+let saveDataCache: boolean | null = null;
+function getSaveData() {
+  if (saveDataCache === null) {
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } })
+      .connection;
+    saveDataCache = !!conn?.saveData;
+  }
+  return saveDataCache;
+}
+
 const subscribeNoop = () => () => {};
 
 function useMediaQuery(query: string) {
@@ -167,14 +56,51 @@ function useMediaQuery(query: string) {
   );
 }
 
+/* ---------------------------------------------------- static fallback */
+
+function HeroFallback() {
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden" aria-hidden="true">
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(60% 60% at 80% 35%, color-mix(in srgb, var(--volt) 12%, transparent), transparent 70%)",
+        }}
+      />
+      {/* Faint static wireframe — stands in for the 3D object */}
+      <svg
+        className="absolute right-[-6%] top-1/2 hidden h-[460px] w-[460px] -translate-y-1/2 opacity-30 md:block"
+        viewBox="0 0 200 200"
+        fill="none"
+        stroke="var(--volt)"
+        strokeWidth="0.8"
+        strokeLinejoin="round"
+      >
+        <polygon points="100,10 178,55 178,145 100,190 22,145 22,55" />
+        <polygon points="100,52 142,76 142,124 100,148 58,124 58,76" />
+        <line x1="100" y1="10" x2="100" y2="190" />
+        <line x1="22" y1="55" x2="178" y2="145" />
+        <line x1="178" y1="55" x2="22" y2="145" />
+        <line x1="100" y1="10" x2="58" y2="76" />
+        <line x1="100" y1="10" x2="142" y2="76" />
+      </svg>
+    </div>
+  );
+}
+
 /* ----------------------------------------------------------------- Hero */
 
 export default function Hero() {
   const reduced = useReducedMotion() ?? false;
-  // false on the server / before hydration → Canvas mounts client-only.
   const hasWebGL = useSyncExternalStore(subscribeNoop, getWebGL, () => false);
+  const saveData = useSyncExternalStore(subscribeNoop, getSaveData, () => false);
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const isMobile = useMediaQuery("(max-width: 900px)");
   const [wordIndex, setWordIndex] = useState(0);
+
+  // Only run the 3D scene on capable desktops without reduced-motion / data-saver.
+  const render3D = hasWebGL && isDesktop && !reduced && !saveData;
 
   useEffect(() => {
     const id = window.setInterval(
@@ -186,23 +112,18 @@ export default function Hero() {
 
   return (
     <section className="relative flex min-h-svh items-center overflow-hidden">
-      {/* 3D background */}
-      {hasWebGL && (
+      {/* 3D background (or static fallback) */}
+      {render3D ? (
         <div className="absolute inset-0 z-0" aria-hidden="true">
-          <Canvas
-            className="!pointer-events-none"
-            camera={{ position: [0, 0, 6], fov: 50 }}
-            gl={{ alpha: true, antialias: true }}
-            style={{ background: "transparent" }}
-          >
-            <Scene isMobile={isMobile} reduced={reduced} />
-          </Canvas>
+          <HeroCanvas isMobile={isMobile} reduced={reduced} />
         </div>
+      ) : (
+        <HeroFallback />
       )}
 
       {/* Foreground */}
       <div className="wrap relative z-[2] w-full py-32">
-        <span className="eyebrow">a developer collective</span>
+        <span className="eyebrow">a developer team</span>
 
         <h1
           className="mt-7 font-display font-extrabold tracking-tight"
@@ -237,9 +158,10 @@ export default function Hero() {
           <span className="block">that ship.</span>
         </h1>
 
-        <p className="mt-8 max-w-[560px] text-slate text-lg leading-relaxed">
-          A small team of engineers and designers who turn ambitious ideas into
-          fast, durable products — from the first line to the launch.
+        <p className="mt-8 max-w-[560px] text-lg leading-relaxed text-slate">
+          We&rsquo;re {team.name} — a small team that designs and builds
+          websites, AI agents, mobile apps and the software underneath, start to
+          finish. One team, one continuous line from idea to shipped.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -247,7 +169,7 @@ export default function Hero() {
             see the work
           </a>
           <a href="#contact" className="btn btn-ghost">
-            say hello
+            connect with us
           </a>
         </div>
       </div>

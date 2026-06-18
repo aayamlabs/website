@@ -68,8 +68,10 @@ export default function PageStroke({ stopAtId = "site-footer" }: PageStrokeProps
   // advances slowly, then smooth it with a spring so the drawn tip trails a
   // little behind the scroll position ("a bit behind the screen end").
   const { scrollYProgress } = useScroll();
-  const drawn = useTransform(scrollYProgress, [0, 1], [0.03, 1]);
-  const smooth = useSpring(drawn, { stiffness: 45, damping: 22, mass: 1 });
+  // Complete the draw by ~90% scroll so the line flows all the way through the
+  // last section (About) before the footer, rather than trailing past it.
+  const drawn = useTransform(scrollYProgress, [0, 0.9], [0.04, 1]);
+  const smooth = useSpring(drawn, { stiffness: 60, damping: 24, mass: 1 });
   // Reduced motion → fully drawn, no animation.
   const pathLength = reduceMotion ? 1 : smooth;
 
@@ -82,19 +84,26 @@ export default function PageStroke({ stopAtId = "site-footer" }: PageStrokeProps
       setDims({ width, height, viewportH });
     };
 
+    // Coalesce reflow/resize bursts into one measure per frame (rAF-throttled).
+    let raf = 0;
+    const scheduleMeasure = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(measure);
+    };
+
     measure();
 
-    // Recompute when the page reflows (content/resize) and once fonts load.
-    const ro = new ResizeObserver(measure);
+    const ro = new ResizeObserver(scheduleMeasure);
     ro.observe(document.body);
-    window.addEventListener("resize", measure);
+    window.addEventListener("resize", scheduleMeasure, { passive: true });
     if (document.fonts?.ready) {
       document.fonts.ready.then(measure).catch(() => {});
     }
 
     return () => {
+      cancelAnimationFrame(raf);
       ro.disconnect();
-      window.removeEventListener("resize", measure);
+      window.removeEventListener("resize", scheduleMeasure);
     };
   }, [stopAtId]);
 

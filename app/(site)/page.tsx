@@ -6,6 +6,7 @@ import WhatWeBuild from "@/components/site/what-we-build";
 import ProcessLine from "@/components/site/process-line";
 import Work from "@/components/site/work";
 import Testimonials from "@/components/site/testimonials";
+import About from "@/components/site/about";
 import SiteFooter from "@/components/site/site-footer";
 
 export default function HomePage() {
@@ -22,6 +23,7 @@ export default function HomePage() {
         <ProcessLine />
         <Work />
         <Testimonials />
+        <About />
       </main>
       <SiteFooter />
     </div>

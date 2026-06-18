@@ -47,12 +47,7 @@ export default function Work() {
       {/* Cards */}
       <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
         {items.map((project, i) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
-            index={i}
-            href={project.url}
-          />
+          <ProjectCard key={project.id} project={project} index={i} />
         ))}
       </div>
     </section>

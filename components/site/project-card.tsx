@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 import type { Project } from "@/lib/site-data";
@@ -77,11 +78,9 @@ type ProjectCardProps = {
   project: Project;
   /** Index within its grid — drives the staggered reveal delay. */
   index?: number;
-  /** When set, the whole card links here (external → opens in a new tab). */
-  href?: string;
 };
 
-export default function ProjectCard({ project, index = 0, href }: ProjectCardProps) {
+export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
   const reduced = useReducedMotion();
 
   return (
@@ -117,22 +116,24 @@ export default function ProjectCard({ project, index = 0, href }: ProjectCardPro
         <div className="flex items-center justify-between gap-4 p-6">
           <div>
             <h3 className="font-display text-2xl font-bold tracking-tight">
-              {href ? (
-                // Stretched link: whole card is clickable, one accessible name.
-                <a
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="after:absolute after:inset-0"
-                  aria-label={`Visit ${project.title} — opens in a new tab`}
-                >
-                  {project.title}
-                </a>
-              ) : (
-                project.title
-              )}
+              {/* Stretched link: whole card opens the internal case study. */}
+              <Link
+                href={`/work/${project.id}`}
+                className="after:absolute after:inset-0"
+                aria-label={`Read the ${project.title} case study`}
+              >
+                {project.title}
+              </Link>
             </h3>
             <p className="mono mt-1">{project.category}</p>
+            {project.outcome && (
+              <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-foreground">
+                <span aria-hidden="true" className="text-volt">
+                  ↳
+                </span>
+                {project.outcome}
+              </p>
+            )}
           </div>
 
           <span

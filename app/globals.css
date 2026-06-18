@@ -29,7 +29,7 @@
   --paper-2: #EFF4DC; /* card / divider tint                */
   --ink:     #1F3A4B; /* primary ink + dark sections        */
   --ink-2:   #162B38; /* deeper ink                         */
-  --slate:   #5C7480; /* muted secondary text               */
+  --slate:   #586E79; /* muted secondary text — nudged darker from #5C7480 for WCAG AA on paper-2 */
   --volt:    #C2F84F; /* THE accent — the line              */
 
   /* ---- type ---- */

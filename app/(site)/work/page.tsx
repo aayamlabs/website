@@ -8,7 +8,7 @@ import AccentStroke from "@/components/site/accent-stroke";
 import { projects } from "@/lib/site-data";
 
 export const metadata: Metadata = {
-  title: "Work — Throughline",
+  title: "Work",
   description: "The full archive of things we've shipped.",
 };
 
@@ -48,12 +48,7 @@ export default function WorkPage() {
 
         <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
           {projects.map((project, i) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              index={i}
-              href={project.url}
-            />
+            <ProjectCard key={project.id} project={project} index={i} />
           ))}
         </div>
       </main>

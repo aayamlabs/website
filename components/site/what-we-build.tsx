@@ -46,15 +46,16 @@ export default function WhatWeBuild() {
       {/* TEMP PATCH: cap header lane so copy clears the page-stroke's right lane */}
       <div className="max-w-full md:max-w-[min(60ch,58%)]">
         <span className="eyebrow">what we make</span>
+        {/* Heading is plain ink — no lime word; the lime lives in the numbered markers. */}
         <h2
-          className="mt-7 max-w-[16ch] font-display font-extrabold tracking-tight"
+          className="mt-7 max-w-[16ch] font-display font-extrabold tracking-tight text-ink"
           style={{ fontSize: "clamp(34px, 6vw, 76px)", lineHeight: 0.98 }}
         >
-          Four things, done properly.
+          We build what you tell us.
         </h2>
         <p className="mt-6 max-w-[560px] text-lg text-slate">
-          We keep our focus narrow on purpose — a handful of disciplines we know
-          deeply, shipped to a standard we can stand behind.
+          Tell us the problem. We pick the right tools and build it end to end —
+          not whatever we happen to like.
         </p>
       </div>
 
@@ -75,12 +76,18 @@ export default function WhatWeBuild() {
                 delay: reduced ? 0 : i * 0.09,
               }}
             >
-              <Icon
-                size={30}
-                strokeWidth={1.5}
-                aria-hidden="true"
-                className="text-foreground"
-              />
+              {/* Numbered marker (lime) top-left, line icon top-right */}
+              <div className="flex items-start justify-between">
+                <span className="font-mono text-[13px] tracking-wider text-volt">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <Icon
+                  size={30}
+                  strokeWidth={1.5}
+                  aria-hidden="true"
+                  className="text-foreground"
+                />
+              </div>
 
               <h3 className="mt-6 font-display text-2xl font-bold tracking-tight">
                 {cell.title}

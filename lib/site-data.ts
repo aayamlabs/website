@@ -1,6 +1,6 @@
 /**
  * Single source of truth for projects and testimonials.
- * Both the home sections (sliced) and the full listing pages read from here.
+ * Both the home sections (sliced) and the full listing/case-study pages read here.
  */
 
 export type Project = {
@@ -13,6 +13,20 @@ export type Project = {
   blurb: string;
   /** Feeds the deterministic canvas thumbnail. */
   seed: number;
+
+  // --- Case-study fields (all optional; fill per project) ---
+  /** One-line result shown under the category on cards, e.g. "cut tickets 70%". */
+  outcome?: string;
+  /** The problem the client had. */
+  problem?: string;
+  /** What we built / the approach taken. */
+  approach?: string;
+  /** Our explicit role on the project. */
+  role?: string;
+  /** Tech used. */
+  stack?: string[];
+  /** Screenshot paths under /public, e.g. "/work/settl/cover.png". Empty = none yet. */
+  images?: string[];
 };
 
 export type Testimonial = {
@@ -25,6 +39,8 @@ export type Testimonial = {
   url: string;
 };
 
+// TODO(you): replace every `outcome`, `problem`, `approach`, `role`, `stack` and
+// `images` below with real case-study content. `images` paths must exist under /public.
 export const projects: Project[] = [
   {
     id: "settl",
@@ -34,6 +50,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "A consumer fintech dashboard with instant settlement and live balances.",
     seed: 1207,
+    outcome: "cut settlement time from days to seconds",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["Next.js", "React", "TypeScript", "Tailwind"],
+    images: [],
   },
   {
     id: "northpeak-ai",
@@ -43,6 +65,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "An autonomous support agent that resolves tickets end to end.",
     seed: 4831,
+    outcome: "resolved 70% of tickets with no human in the loop",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["LLMs", "RAG", "Vector DBs", "Python"],
+    images: [],
   },
   {
     id: "tempo",
@@ -52,6 +80,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "A cross-platform habit tracker with offline-first sync.",
     seed: 9056,
+    outcome: "shipped both stores from one codebase in 9 weeks",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["React Native", "Swift", "Expo"],
+    images: [],
   },
   {
     id: "relay",
@@ -61,6 +95,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "Event-driven infrastructure moving millions of messages a day.",
     seed: 6402,
+    outcome: "scaled to 5M msgs/day at a third of the cost",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["Node", "Postgres", "AWS", "Go"],
+    images: [],
   },
   {
     id: "lumen",
@@ -70,6 +110,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "A clinician portal that turns patient data into clear next steps.",
     seed: 2718,
+    outcome: "saved clinicians ~6 hours a week",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["Next.js", "TypeScript", "Postgres"],
+    images: [],
   },
   {
     id: "cargo",
@@ -79,6 +125,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "Real-time fleet routing and shipment visibility at scale.",
     seed: 3141,
+    outcome: "cut empty-miles 22% across the fleet",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["Node", "PostGIS", "AWS"],
+    images: [],
   },
   {
     id: "vega-ai",
@@ -88,6 +140,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "A natural-language analyst that queries the warehouse for you.",
     seed: 5926,
+    outcome: "answered 80% of data questions self-serve",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["LLMs", "DuckDB", "Python", "Next.js"],
+    images: [],
   },
   {
     id: "drift",
@@ -97,6 +155,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "An ephemeral social app built for fast, low-latency feeds.",
     seed: 5358,
+    outcome: "held p95 feed load under 200ms",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["React Native", "Expo", "WebSockets"],
+    images: [],
   },
   {
     id: "mint",
@@ -106,6 +170,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "A checkout and payments layer with a drop-in component kit.",
     seed: 9793,
+    outcome: "lifted checkout conversion 18%",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["Next.js", "Stripe", "TypeScript"],
+    images: [],
   },
   {
     id: "atlas",
@@ -115,6 +185,12 @@ export const projects: Project[] = [
     url: "https://example.com",
     blurb: "A developer platform with self-serve environments and previews.",
     seed: 2384,
+    outcome: "dropped environment spin-up to under a minute",
+    problem: "TODO(you): what was broken / slow / missing for the client?",
+    approach: "TODO(you): what you designed and built, and the key decisions.",
+    role: "TODO(you): our role — e.g. design, build & ship, end to end.",
+    stack: ["Go", "Kubernetes", "Next.js"],
+    images: [],
   },
 ];
 
@@ -125,7 +201,7 @@ export const testimonials: Testimonial[] = [
     role: "founder",
     company: "Settl",
     quote:
-      "They embedded like part of our own team and shipped faster than we thought possible — without ever cutting the corners that matter.",
+      "Working with one team that designed, built, and shipped the whole thing was a revelation — nothing got lost between strangers, and it shows in the product.",
     url: "https://example.com",
   },
   {
@@ -134,7 +210,7 @@ export const testimonials: Testimonial[] = [
     role: "COO",
     company: "Northpeak",
     quote:
-      "The same people designed, built, and launched the whole thing. Nothing got lost in translation, and it shows in the product.",
+      "Embedded like part of our team and shipped faster than we thought possible — without ever cutting the corners that matter.",
     url: "https://example.com",
   },
   {
@@ -152,7 +228,7 @@ export const testimonials: Testimonial[] = [
     role: "VP engineering",
     company: "Relay",
     quote:
-      "They understood our infrastructure better than some of our own hires within a week, and the rollout was flawless.",
+      "Understood our infrastructure better than some of our own hires within a week, and the rollout was flawless.",
     url: "https://example.com",
   },
   {
@@ -161,7 +237,7 @@ export const testimonials: Testimonial[] = [
     role: "head of product",
     company: "Lumen",
     quote:
-      "Thoughtful, fast, and genuinely invested in the outcome. We'll be working with this team for a long time.",
+      "Thoughtful, fast, and genuinely invested in the outcome. We'll be working together for a long time.",
     url: "https://example.com",
   },
   {
@@ -174,3 +250,7 @@ export const testimonials: Testimonial[] = [
     url: "https://example.com",
   },
 ];
+
+export function getProject(slug: string): Project | undefined {
+  return projects.find((p) => p.id === slug);
+}
