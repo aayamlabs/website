@@ -16,7 +16,7 @@ export const team = {
   linkedin: "TODO(you): https://linkedin.com/company/aayamlabs",
   x: "TODO(you): https://x.com/aayamlabs",
   /** Used for metadataBase / canonical URLs / sitemap. */
-  siteUrl: "TODO(you): https://aayamlabs.in",
+  siteUrl: "https://aayamlabs.in",
 } as const;
 
 export type Team = typeof team;

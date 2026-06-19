@@ -7,6 +7,7 @@ import Navbar from "@/components/site/navbar";
 import SiteFooter from "@/components/site/site-footer";
 import { projects, getProject } from "@/lib/site-data";
 import { team } from "@/lib/team";
+import JsonLd, { caseStudyLd } from "@/components/site/json-ld";
 
 type Params = { slug: string };
 
@@ -25,6 +26,7 @@ export async function generateMetadata({
   return {
     title: `${project.title} — ${project.category}`,
     description: project.outcome ?? project.blurb,
+    alternates: { canonical: `/work/${slug}` },
   };
 }
 
@@ -58,6 +60,7 @@ export default async function CaseStudyPage({
 
   return (
     <div className="relative">
+      <JsonLd data={caseStudyLd(project)} />
       <Navbar />
 
       <main className="wrap pt-32 pb-24 md:pt-40">

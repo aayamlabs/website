@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
 import { team } from "@/lib/team";
+import JsonLd, { organizationLd } from "@/components/site/json-ld";
 import "./globals.css";
 
 // team.siteUrl is a TODO placeholder until filled; fall back to a valid URL
@@ -65,7 +66,10 @@ export default function RootLayout({
       lang="en"
       className={`${fontDisplay.variable} ${fontBody.variable} ${fontMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <JsonLd data={organizationLd()} />
+        {children}
+      </body>
     </html>
   );
 }

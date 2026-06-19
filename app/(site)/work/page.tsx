@@ -10,6 +10,7 @@ import { projects } from "@/lib/site-data";
 export const metadata: Metadata = {
   title: "Work",
   description: "The full archive of things we've shipped.",
+  alternates: { canonical: "/work" },
 };
 
 export default function WorkPage() {
@@ -46,11 +47,15 @@ export default function WorkPage() {
           </p>
         </header>
 
-        <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
-          {projects.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} />
-          ))}
-        </div>
+        {/* sr-only section heading keeps the outline clean (h1 → h2 → h3 cards). */}
+        <section aria-label="All projects">
+          <h2 className="sr-only">All projects</h2>
+          <div className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {projects.map((project, i) => (
+              <ProjectCard key={project.id} project={project} index={i} />
+            ))}
+          </div>
+        </section>
       </main>
 
       <SiteFooter />

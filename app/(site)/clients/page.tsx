@@ -10,6 +10,7 @@ import { testimonials } from "@/lib/site-data";
 export const metadata: Metadata = {
   title: "Clients",
   description: "What clients say, in their words.",
+  alternates: { canonical: "/clients" },
 };
 
 export default function ClientsPage() {

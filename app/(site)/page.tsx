@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import PageStroke from "@/components/site/page-stroke";
 import Navbar from "@/components/site/navbar";
 import Hero from "@/components/site/hero";
@@ -8,6 +9,12 @@ import Work from "@/components/site/work";
 import Testimonials from "@/components/site/testimonials";
 import About from "@/components/site/about";
 import SiteFooter from "@/components/site/site-footer";
+
+// Home inherits title/description from the root layout; only the canonical
+// is page-specific. Relative path resolves against metadataBase.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   return (
