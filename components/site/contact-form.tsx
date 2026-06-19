@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CircleCheckBig, Send } from "lucide-react";
+import { CircleCheckBig, Loader2, Send } from "lucide-react";
 
 import { team } from "@/lib/team";
 import { Button } from "@/components/ui/button";
@@ -43,12 +43,19 @@ const schema = z.object({
   }),
   budget: z.enum(["<5k", "5-15k", "15-40k", "40k+", "not sure"]).optional(),
   message: z.string().min(1, "Tell us a little about the project."),
+  // Honeypot — real users never see/fill this; Web3Forms rejects if truthy.
+  botcheck: z.boolean().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
 
+type Status = "idle" | "sending" | "success" | "error";
+
+const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
+
 export default function ContactForm() {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const {
     register,
@@ -58,46 +65,62 @@ export default function ContactForm() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", message: "" },
+    defaultValues: { name: "", email: "", message: "", botcheck: false },
   });
 
-  const onSubmit = (data: FormValues) => {
-    // No backend yet: assemble a prefilled mailto and show a success state.
-    //
-    // TODO(you): to send without opening a mail client, POST to a route handler
-    // and use an email provider. Example:
-    //   // app/api/contact/route.ts
-    //   import { Resend } from "resend";
-    //   const resend = new Resend(process.env.RESEND_API_KEY);
-    //   export async function POST(req: Request) {
-    //     const data = await req.json();
-    //     await resend.emails.send({
-    //       from: "site@yourdomain.dev",
-    //       to: process.env.CONTACT_TO!,
-    //       subject: `New enquiry — ${data.name}`,
-    //       replyTo: data.email,
-    //       text: `${data.message}\n\n— ${data.name} (${data.email})`,
-    //     });
-    //     return Response.json({ ok: true });
-    //   }
-    // Then here: await fetch("/api/contact", { method: "POST", body: JSON.stringify(data) })
-    const subject = `New project enquiry — ${data.name}`;
-    const lines = [
-      `Name: ${data.name}`,
-      `Email: ${data.email}`,
-      `Project type: ${data.projectType}`,
-      `Budget: ${data.budget ?? "—"}`,
-      "",
-      data.message,
-    ];
-    const href = `mailto:${team.email}?subject=${encodeURIComponent(
-      subject
-    )}&body=${encodeURIComponent(lines.join("\n"))}`;
-    window.location.assign(href);
-    setSubmitted(true);
+  const onSubmit = async (data: FormValues) => {
+    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+    if (!accessKey) {
+      setStatus("error");
+      setErrorMsg(
+        "The form isn't configured yet — please email us directly instead."
+      );
+      return;
+    }
+
+    setStatus("sending");
+    setErrorMsg(null);
+
+    try {
+      const res = await fetch(WEB3FORMS_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          access_key: accessKey,
+          subject: `New project enquiry — ${team.name}`,
+          from_name: data.name,
+          name: data.name,
+          email: data.email,
+          "Project type": data.projectType,
+          Budget: data.budget ?? "—",
+          message: data.message,
+          botcheck: data.botcheck ?? false,
+        }),
+      });
+
+      const json = await res.json().catch(() => null);
+
+      if (res.ok && json?.success) {
+        reset();
+        setStatus("success");
+      } else {
+        setStatus("error");
+        setErrorMsg(
+          json?.message ?? "Something went wrong — please try again."
+        );
+      }
+    } catch {
+      setStatus("error");
+      setErrorMsg(
+        "Couldn't reach the server — check your connection or email us directly."
+      );
+    }
   };
 
-  if (submitted) {
+  if (status === "success") {
     return (
       <div
         role="status"
@@ -108,15 +131,15 @@ export default function ContactForm() {
           Thanks — your message is on its way.
         </p>
         <p className="mt-2 text-muted-foreground">
-          Your mail client should have opened with the details prefilled — if it
-          didn&rsquo;t, email us directly at {team.email}. We&rsquo;ll get back to
-          you within a day.
+          We&rsquo;ve got your enquiry and will get back to you within a day. If
+          it&rsquo;s urgent, email us directly at {team.email}.
         </p>
         <button
           type="button"
           onClick={() => {
             reset();
-            setSubmitted(false);
+            setErrorMsg(null);
+            setStatus("idle");
           }}
           className="mt-6 font-mono text-sm text-paper underline decoration-volt decoration-2 underline-offset-4"
         >
@@ -126,8 +149,20 @@ export default function ContactForm() {
     );
   }
 
+  const sending = status === "sending";
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} noValidate className="grid gap-5">
+      {/* Honeypot — hidden from humans; bots that fill it get rejected. */}
+      <input
+        type="checkbox"
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="hidden"
+        {...register("botcheck")}
+      />
+
       <div className="grid gap-5 sm:grid-cols-2">
         {/* Name */}
         <div className="grid gap-2">
@@ -252,11 +287,23 @@ export default function ContactForm() {
       <div>
         <Button
           type="submit"
+          disabled={sending}
+          aria-busy={sending}
           className="bg-volt text-ink-2 hover:bg-volt/90"
         >
-          <Send size={16} aria-hidden="true" />
-          send message
+          {sending ? (
+            <Loader2 size={16} aria-hidden="true" className="animate-spin" />
+          ) : (
+            <Send size={16} aria-hidden="true" />
+          )}
+          {sending ? "sending…" : "send message"}
         </Button>
+
+        {status === "error" && errorMsg && (
+          <p role="alert" className="mt-3 text-sm text-destructive">
+            {errorMsg}
+          </p>
+        )}
       </div>
     </form>
   );

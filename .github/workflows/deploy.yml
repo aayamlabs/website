@@ -22,6 +22,10 @@ jobs:
       - uses: actions/configure-pages@v5
       - run: npm ci
       - run: npm run build
+        env:
+          # NEXT_PUBLIC_ vars are inlined at build time, so the secret must be
+          # present here. Add it under Settings → Secrets and variables → Actions.
+          NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY: ${{ secrets.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
