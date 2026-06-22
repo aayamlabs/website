@@ -35,7 +35,7 @@ export function organizationLd(): object {
         name: team.name,
         url: `${siteUrl}/`,
         description: `${team.name} — a team building websites, AI agents, mobile apps and the software underneath.`,
-        logo: `${siteUrl}/favicon.ico`,
+        logo: `${siteUrl}/icon.png`,
         ...(sameAs.length > 0 ? { sameAs } : {}),
       },
       {
