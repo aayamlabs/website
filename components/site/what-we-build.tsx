@@ -32,7 +32,7 @@ const CELLS: Cell[] = [
   {
     icon: Server,
     title: "Custom software & platforms",
-    desc: "APIs, data layers, and infrastructure engineered to scale without drama.",
+    desc: "APIs, data layers, and infrastructure engineered to scale smoothly and stay reliable under load.",
     tags: ["Node", "Postgres", "AWS", "Go"],
   },
 ];
