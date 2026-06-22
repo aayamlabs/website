@@ -159,7 +159,7 @@ export default function Hero() {
         </h1>
 
         <p className="mt-8 max-w-[560px] text-lg leading-relaxed text-slate">
-          We&rsquo;re {team.name} — a small team that designs and builds
+          We&rsquo;re {team.name} — a team that designs and builds
           websites, AI agents, mobile apps and the software underneath, start to
           finish. One team, one continuous line from idea to shipped.
         </p>

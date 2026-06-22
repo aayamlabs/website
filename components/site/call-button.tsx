@@ -4,9 +4,8 @@ import { useState } from "react";
 import { Phone } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
-// Placeholder — swap for the real number.
-const PHONE_DISPLAY = "+1 (555) 012-3456";
-const PHONE_HREF = "tel:+15550123456";
+const PHONE_DISPLAY = "+91 79030 91869";
+const PHONE_HREF = "tel:+917903091869";
 
 export default function CallButton() {
   const [open, setOpen] = useState(false);

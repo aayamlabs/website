@@ -7,7 +7,7 @@ export const team = {
   name: "Aayamlabs",
   /** Short positioning line used in metadata / OG (replaces the old per-person role). */
   tagline: "a developer team — web, AI, mobile, software",
-  email: "TODO(you): hello@aayamlabs.in",
+  email: "getintouch@aayamlabs.in",
   city: "TODO(you): Your City, Country",
   availableFrom: "TODO(you): e.g. August 2026",
   bookingUrl: "TODO(you): https://cal.com/aayamlabs/intro",

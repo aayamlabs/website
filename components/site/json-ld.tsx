@@ -34,7 +34,7 @@ export function organizationLd(): object {
         "@id": `${siteUrl}/#organization`,
         name: team.name,
         url: `${siteUrl}/`,
-        description: `${team.name} — a small team building websites, AI agents, mobile apps and the software underneath.`,
+        description: `${team.name} — a team building websites, AI agents, mobile apps and the software underneath.`,
         logo: `${siteUrl}/favicon.ico`,
         ...(sameAs.length > 0 ? { sameAs } : {}),
       },

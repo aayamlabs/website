@@ -47,7 +47,7 @@ export default function ProcessLine() {
             className="mt-8 max-w-[560px] text-lg leading-relaxed text-muted-foreground"
             {...reveal(2)}
           >
-            The same small team carries your product from the first whiteboard
+            The same team carries your product from the first whiteboard
             sketch to the production deploy — no handoffs, no telephone game,
             nothing lost between strangers. That lime line is exactly that: a
             single, unbroken throughline of ownership from idea to shipped.

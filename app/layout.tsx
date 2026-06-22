@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     default: `${team.name} — ${team.tagline}`,
     template: `%s · ${team.name}`,
   },
-  description: `${team.name} — a small team building websites, AI agents, mobile apps and the software underneath. One team, idea to shipped.`,
+  description: `${team.name} — a team building websites, AI agents, mobile apps and the software underneath. One team, idea to shipped.`,
   keywords: [
     "developer team",
     "web development",
