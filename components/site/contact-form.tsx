@@ -27,13 +27,7 @@ const PROJECT_TYPES = [
   { value: "other", label: "Something else" },
 ] as const;
 
-const BUDGETS = [
-  { value: "<5k", label: "Under $5k" },
-  { value: "5-15k", label: "$5–15k" },
-  { value: "15-40k", label: "$15–40k" },
-  { value: "40k+", label: "$40k+" },
-  { value: "not sure", label: "Not sure yet" },
-] as const;
+const CURRENCIES = ["INR", "USD", "EUR", "GBP", "AUD"] as const;
 
 const schema = z.object({
   name: z.string().min(1, "Please enter your name."),
@@ -41,7 +35,11 @@ const schema = z.object({
   projectType: z.enum(["web", "ai", "mobile", "software", "other"], {
     message: "Pick a project type.",
   }),
-  budget: z.enum(["<5k", "5-15k", "15-40k", "40k+", "not sure"]).optional(),
+  // Budget is optional and split into amount + currency. The currency defaults
+  // to INR via the form's defaultValues (not zod .default(), which would make
+  // the resolver's input/output types diverge).
+  budgetAmount: z.string().optional(),
+  budgetCurrency: z.enum(CURRENCIES),
   message: z.string().min(1, "Tell us a little about the project."),
   // Honeypot — real users never see/fill this; Web3Forms rejects if truthy.
   botcheck: z.boolean().optional(),
@@ -65,7 +63,14 @@ export default function ContactForm() {
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { name: "", email: "", message: "", botcheck: false },
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+      budgetAmount: "",
+      budgetCurrency: "INR",
+      botcheck: false,
+    },
   });
 
   const onSubmit = async (data: FormValues) => {
@@ -95,7 +100,9 @@ export default function ContactForm() {
           name: data.name,
           email: data.email,
           "Project type": data.projectType,
-          Budget: data.budget ?? "—",
+          Budget: data.budgetAmount?.trim()
+            ? `${data.budgetCurrency} ${data.budgetAmount.trim()}`
+            : "—",
           message: data.message,
           botcheck: data.botcheck ?? false,
         }),
@@ -239,29 +246,43 @@ export default function ContactForm() {
           )}
         </div>
 
-        {/* Budget (optional) */}
+        {/* Budget (optional) — amount + currency, defaults to INR */}
         <div className="grid gap-2">
           <Label htmlFor="cf-budget" className="text-paper">
             Budget <span className="text-muted-foreground">(optional)</span>
           </Label>
-          <Controller
-            name="budget"
-            control={control}
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger id="cf-budget">
-                  <SelectValue placeholder="Choose a range" />
-                </SelectTrigger>
-                <SelectContent>
-                  {BUDGETS.map((o) => (
-                    <SelectItem key={o.value} value={o.value}>
-                      {o.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
+          <div className="flex gap-2">
+            <Input
+              id="cf-budget"
+              inputMode="numeric"
+              placeholder="50,000"
+              autoComplete="off"
+              className="flex-1"
+              {...register("budgetAmount")}
+            />
+            <Controller
+              name="budgetCurrency"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger
+                    id="cf-currency"
+                    aria-label="Currency"
+                    className="w-[6.5rem] shrink-0"
+                  >
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCIES.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+          </div>
         </div>
       </div>
 
