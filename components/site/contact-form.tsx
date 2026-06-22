@@ -74,7 +74,12 @@ export default function ContactForm() {
   });
 
   const onSubmit = async (data: FormValues) => {
-    const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+    // Web3Forms access keys are publishable (they ship to the browser by
+    // design), so a committed default is fine and lets the static build work
+    // without a secret. An env var still overrides it if set.
+    const accessKey =
+      process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ??
+      "7ab08c51-5705-4463-be89-b733bd0f0cf8";
     if (!accessKey) {
       setStatus("error");
       setErrorMsg(
