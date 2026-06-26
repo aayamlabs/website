@@ -1,16 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
 import type { Testimonial } from "@/lib/site-data";
-
-function initialsOf(name: string) {
-  return name
-    .split(/\s+/)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
 
 type QuoteCardProps = {
   testimonial: Testimonial;
@@ -54,11 +46,14 @@ export default function QuoteCard({ testimonial, index = 0, href }: QuoteCardPro
 
       {/* Author */}
       <figcaption className="mt-8 flex items-center gap-4">
-        <span
-          aria-hidden="true"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-ink font-mono text-sm font-medium text-volt"
-        >
-          {initialsOf(t.name)}
+        <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-ink">
+          <Image
+            src={t.avatar}
+            alt=""
+            width={48}
+            height={48}
+            className="h-full w-full object-cover"
+          />
         </span>
         <span className="flex flex-col">
           <span className="font-sans font-semibold text-foreground">

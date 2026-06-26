@@ -93,14 +93,18 @@ export default async function CaseStudyPage({
             project.images!.map((src, i) => (
               <div
                 key={src}
-                className="relative aspect-[16/10] overflow-hidden rounded-card border border-border"
+                className={`relative aspect-[16/10] overflow-hidden rounded-card border border-border bg-ink-2 ${project.images!.length === 1 ? "sm:col-span-2" : ""}`}
               >
                 <Image
                   src={src}
                   alt={`${project.title} screenshot ${i + 1}`}
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
+                  sizes={
+                    project.images!.length === 1
+                      ? "100vw"
+                      : "(max-width: 768px) 100vw, 50vw"
+                  }
+                  className="object-contain"
                 />
               </div>
             ))
@@ -119,18 +123,16 @@ export default async function CaseStudyPage({
           <Block label="The problem">{project.problem}</Block>
           <Block label="What we built">
             {project.approach}
-            <p className="mt-3 text-foreground">
-              <span className="font-semibold">Our role:</span> {project.role}
-            </p>
+            {project.role && (
+              <div className="mt-3 text-foreground">
+                <p className="font-semibold">Our role:</p>
+                <p className="mt-1 whitespace-pre-line text-slate">{project.role}</p>
+              </div>
+            )}
           </Block>
           <Block label="The outcome">
             {project.outcome && (
-              <p className="flex items-baseline gap-2 font-display text-2xl font-bold tracking-tight text-foreground">
-                <span aria-hidden="true" className="text-volt">
-                  ↳
-                </span>
-                {project.outcome}
-              </p>
+              <p className="leading-relaxed text-foreground">{project.outcome}</p>
             )}
           </Block>
         </div>

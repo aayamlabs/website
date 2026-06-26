@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
@@ -82,6 +83,7 @@ type ProjectCardProps = {
 
 export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
   const reduced = useReducedMotion();
+  const thumb = project.images?.[0];
 
   return (
     <motion.div
@@ -98,15 +100,17 @@ export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
       <article className="group relative overflow-hidden rounded-card border border-border bg-paper-2 transition-[transform,box-shadow] duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-ink-2/40">
         {/* Thumb */}
         <div className="relative aspect-[16/10] overflow-hidden bg-ink-2">
-          <CanvasThumb seed={project.seed} />
-          {/*
-            TODO: swap the generative canvas for a real screenshot:
-              1. import Image from "next/image";
-              2. drop the file in /public/work/<id>.png
-              3. replace <CanvasThumb seed={project.seed} /> with:
-                   <Image src={`/work/${project.id}.png`} alt={`${project.title} screenshot`}
-                     fill sizes="(max-width: 768px) 100vw, 50vw" className="object-cover" />
-          */}
+          {thumb ? (
+            <Image
+              src={thumb}
+              alt={`${project.title} screenshot`}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          ) : (
+            <CanvasThumb seed={project.seed} />
+          )}
           <span className="mono absolute left-4 top-4 text-volt">
             {project.index}
           </span>

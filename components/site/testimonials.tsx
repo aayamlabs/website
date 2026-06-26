@@ -40,8 +40,8 @@ export default function Testimonials() {
       </div>
 
       <p className="mt-6 max-w-[560px] text-lg text-slate">
-        Placeholder quotes for now — swap these out for real words from your own
-        clients.
+        Founders we&apos;ve built with — on ownership, craft, and shipping what
+        matters.
       </p>
 
       {/* Cards */}
