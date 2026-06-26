@@ -90,8 +90,12 @@ export default function About() {
           <Calendar size={16} aria-hidden="true" />
           book a 20-min intro call
         </a>
-        {/* TODO(you): set team.deckUrl (PDF) */}
-        <a href={team.deckUrl} className="btn btn-ghost" download>
+        <a
+          href={team.deckUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="btn btn-ghost"
+        >
           <Download size={16} aria-hidden="true" />
           download our deck (PDF)
         </a>

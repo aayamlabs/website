@@ -11,7 +11,7 @@ export const team = {
   city: "TODO(you): Your City, Country",
   availableFrom: "TODO(you): e.g. August 2026",
   bookingUrl: "TODO(you): https://cal.com/aayamlabs/intro",
-  deckUrl: "TODO(you): /aayamlabs-deck.pdf",
+  deckUrl: "https://shorturl.at/D18It",
   github: "TODO(you): https://github.com/aayamlabs",
   linkedin: "TODO(you): https://linkedin.com/company/aayamlabs",
   x: "TODO(you): https://x.com/aayamlabs",
